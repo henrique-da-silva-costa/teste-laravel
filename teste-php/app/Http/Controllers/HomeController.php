@@ -2,12 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Jobs\DeputadosJob;
+use App\Models\Deputados;
+use Illuminate\Support\Facades\Http;
 
 class HomeController extends Controller
 {
+    private $deputados;
+
+    public function __construct()
+    {
+        $this->deputados = new Deputados;
+    }
+
     public function Home()
     {
-        return response()->json(["home" => "pagina incial"]);
+        DeputadosJob::dispatch();
     }
 }
