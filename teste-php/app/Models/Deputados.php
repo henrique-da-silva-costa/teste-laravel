@@ -26,21 +26,41 @@ class Deputados extends Model
             $estado = isset($filtros["estado"]) ? $filtros["estado"] : NULL;
 
             $dados = DB::table($this->tabelaDeputados)
-                ->join($this->tabelaDespesas, "{$this->tabelaDespesas}.deputados_id", "=", "{$this->tabelaDeputados}.id")
                 ->where("{$this->tabelaDeputados}.nome", "like", "{$nome}%")
                 ->where("{$this->tabelaDeputados}.siglaUf", "like", "{$estado}%")
                 ->select([
+                    "{$this->tabelaDeputados}.id",
                     "{$this->tabelaDeputados}.nome",
                     "{$this->tabelaDeputados}.urlFoto AS foto",
                     "{$this->tabelaDeputados}.siglaUf AS estado",
-                    "{$this->tabelaDeputados}.siglaPartido AS partido",
-                    "{$this->tabelaDespesas}.tipoDespesa AS despesa",
-                    "{$this->tabelaDespesas}.valorDocumento AS valor",
-                ])->limit(100)->paginate(20);
+                    "{$this->tabelaDeputados}.siglaPartido AS partido"
+                ])
+                ->limit(100)
+                ->paginate(5);
 
             return $dados;
         } catch (\Throwable $th) {
             return [$th->getMessage()];
+        }
+    }
+
+    public function pegarDespesas($id)
+    {
+        try {
+            $dados = DB::table($this->tabelaDespesas)
+                ->where("deputados_id", "=", $id)
+                ->select([
+                    "{$this->tabelaDespesas}.tipoDespesa as tipo",
+                    "{$this->tabelaDespesas}.nomeFornecedor as fornecedor",
+                    "{$this->tabelaDespesas}.dataDocumento as data",
+                    "{$this->tabelaDespesas}.valorDocumento AS valor",
+                ])
+                ->limit(100)
+                ->paginate(7);
+
+            return $dados;
+        } catch (\Throwable $th) {
+            return [];
         }
     }
 

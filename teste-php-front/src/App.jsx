@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import Home from './Home'
 import axios from 'axios'
+import Despesas from './componentes/Despesas'
 
 function App() {
 
@@ -24,6 +23,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route element={<Home />} path="/" />
+          <Route element={<Despesas />} path="/despesas/:id" />
         </Routes>
       </BrowserRouter>
     </>

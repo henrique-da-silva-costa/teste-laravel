@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get("/", [HomeController::class, "home"])->name("HomeController.home");
 Route::get("/deputados", [HomeController::class, "deputados"])->name("HomeController.deputados");
+Route::get("/despesas", [HomeController::class, "despesas"])->name("HomeController.despesas");
 Route::get("/sincronizar", function () {
     DeputadosJob::dispatch();
 

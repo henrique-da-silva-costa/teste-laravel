@@ -1,26 +1,27 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react'
-import styles from "./stilos.module.css"
+import styles from "../stilos.module.css"
 import { Button, Container, Table } from 'reactstrap';
-import Carregando from './componentes/Carregando';
-import Filtros from './componentes/Filtros';
-import { useNavigate } from 'react-router-dom';
+import Carregando from './Carregando';
+import { useNavigate, useParams } from 'react-router-dom';
+import moment from 'moment';
+import { FaArrowLeft } from 'react-icons/fa';
 
-const Home = () => {
+const Despesas = () => {
     const [dados, setDados] = useState([]);
     const [msg, setMsg] = useState("");
     const [paginaAtual, setPaginaAtual] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [botaoDesabilitado, setBotaoDesabilitado] = useState(false);
     const [removerLoading, setRemoverLoading] = useState(false);
+    const { id } = useParams();
     const navegacao = useNavigate();
 
     const pegarDados = (page, filtros) => {
         setBotaoDesabilitado(true)
-        axios.get("http://127.0.0.1:80/deputados", { params: { filtros, page } })
+        axios.get("http://127.0.0.1:80/despesas", { params: { id, page } })
             .then((res) => {
-                console.log(res.data.data)
-
+                console.log(res.data);
                 setDados(!res.data.data ? [] : res.data.data);
                 setPaginaAtual(res.data.current_page);
                 setTotalPages(res.data.last_page);
@@ -118,18 +119,19 @@ const Home = () => {
 
     return (
         <>
-            <Container>
-                <Filtros paginaAtual={paginaAtual} pegarDados={pegarDados} />
-                <h1>Deputados</h1>
+            <Container className='mt-2'>
+                <Button color='transparent' onClick={() => navegacao("/")}><FaArrowLeft size={40} color='black' /></Button>
+                <h1>Despesas</h1>
                 {dados.length > 0 ?
                     <Table responsive striped size="sm">
                         <thead>
                             <tr>
-                                <th></th>
-                                <th>Nome</th>
-                                <th>Partido</th>
-                                <th>Estado</th>
-                                <th>Despesas</th>
+                                <th>Tipo de despesa</th>
+                                <th>Valor</th>
+                                <th>Data</th>
+                                <th>Fornecedor</th>
+                                {/* <th>Partido</th>
+                                <th>Estado</th> */}
                             </tr>
                         </thead>
                         <tbody>
@@ -137,15 +139,10 @@ const Home = () => {
                                 {dados.length > 0 ? dados.map((dado, index) => {
                                     return (
                                         <tr key={index}>
-                                            <td>
-                                                <img src={dado.foto} height={70} alt="foto do deputado" />
-                                            </td>
-                                            <td>{dado.nome ? dado.nome.slice(0, 30) + `${dado.nome.length >= 30 ? "..." : ""}` : "não informado"}</td>
-                                            <td><strong>{dado.partido}</strong></td>
-                                            <td><strong>{dado.estado}</strong></td>
-                                            <td className="text-end">
-                                                <Button onClick={() => navegacao(`despesas/${dado.id}`)}>Despesas</Button>
-                                            </td>
+                                            <td>{dado.tipo}</td>
+                                            <td><strong>R$ {dado.valor}</strong></td>
+                                            <td>{moment(dado.data).format("DD/MM/YYYY")}</td>
+                                            <td>{dado.fornecedor}</td>
                                         </tr>
                                     )
                                 }) : ""}
@@ -185,4 +182,4 @@ const Home = () => {
     )
 }
 
-export default Home
+export default Despesas
