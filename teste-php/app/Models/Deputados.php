@@ -11,34 +11,43 @@ class Deputados extends Model
 {
 
     private $tabelaDeputados;
-    private $tabelaDespesa;
+    private $tabelaDespesas;
 
     public function __construct()
     {
         $this->tabelaDeputados = Tabelas::DEPUTADOS;
-        $this->tabelaDespesa = Tabelas::DESPESAS;
+        $this->tabelaDespesas = Tabelas::DESPESAS;
+    }
+
+    public function pegarDeputados($filtros)
+    {
+        try {
+            $nome = isset($filtros["nome"]) ? $filtros["nome"] : NULL;
+            $estado = isset($filtros["estado"]) ? $filtros["estado"] : NULL;
+
+            $dados = DB::table($this->tabelaDeputados)
+                ->join($this->tabelaDespesas, "{$this->tabelaDespesas}.deputados_id", "=", "{$this->tabelaDeputados}.id")
+                ->where("{$this->tabelaDeputados}.nome", "like", "{$nome}%")
+                ->where("{$this->tabelaDeputados}.siglaUf", "like", "{$estado}%")
+                ->select([
+                    "{$this->tabelaDeputados}.nome",
+                    "{$this->tabelaDeputados}.urlFoto AS foto",
+                    "{$this->tabelaDeputados}.siglaUf AS estado",
+                    "{$this->tabelaDeputados}.siglaPartido AS partido",
+                    "{$this->tabelaDespesas}.tipoDespesa AS despesa",
+                    "{$this->tabelaDespesas}.valorDocumento AS valor",
+                ])->limit(100)->paginate(20);
+
+            return $dados;
+        } catch (\Throwable $th) {
+            return [$th->getMessage()];
+        }
     }
 
     public function existeDeputado($email)
     {
         try {
             $totalDeputados = DB::table($this->tabelaDeputados)->where("email", "=", $email)->count();
-
-            if ($totalDeputados > 0) {
-                return TRUE;
-            }
-
-            return FALSE;
-        } catch (\Throwable $th) {
-            return NULL;
-        }
-    }
-
-    public function existeDespesa($codDocumento)
-
-    {
-        try {
-            $totalDeputados = DB::table($this->tabelaDespesa)->where("codDocumento", "=", $codDocumento)->count();
 
             if ($totalDeputados > 0) {
                 return TRUE;
@@ -60,10 +69,22 @@ class Deputados extends Model
 
             $nome = isset($dados["nome"]) ? $dados["nome"] : NULL;
             $email = isset($dados["email"]) ? $dados["email"] : NULL;
+            $uri = isset($dados["uri"]) ? $dados["uri"] : NULL;
+            $siglaPartido = isset($dados["siglaPartido"]) ? $dados["siglaPartido"] : NULL;
+            $uriPartido = isset($dados["uriPartido"]) ? $dados["uriPartido"] : NULL;
+            $siglaUf = isset($dados["siglaUf"]) ? $dados["siglaUf"] : NULL;
+            $idLegislatura = isset($dados["idLegislatura"]) ? $dados["idLegislatura"] : NULL;
+            $urlFoto = isset($dados["urlFoto"]) ? $dados["urlFoto"] : NULL;
 
             $retorno->id = DB::table($this->tabelaDeputados)->insertGetId([
                 "nome" => $nome,
-                "email" => $email
+                "email" => $email,
+                "uri" => $uri,
+                "siglaPartido" => $siglaPartido,
+                "uriPartido" => $uriPartido,
+                "siglaUf" => $siglaUf,
+                "idLegislatura" => $idLegislatura,
+                "urlFoto" => $urlFoto,
             ]);
 
             return $retorno;
@@ -101,7 +122,7 @@ class Deputados extends Model
             $codLote = isset($dados["codLote"]) ? $dados["codLote"] : NULL;
             $parcela = isset($dados["parcela"]) ? $dados["parcela"] : NULL;
 
-            DB::table($this->tabelaDespesa)->insertGetId([
+            DB::table($this->tabelaDespesas)->insertGetId([
                 "deputados_id" => $deputado_id,
                 "ano" => $ano,
                 "mes" => $mes,

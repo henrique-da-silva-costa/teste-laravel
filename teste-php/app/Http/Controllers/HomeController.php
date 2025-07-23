@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\DeputadosJob;
 use App\Models\Deputados;
 use Illuminate\Support\Facades\Http;
 
@@ -15,8 +14,12 @@ class HomeController extends Controller
         $this->deputados = new Deputados;
     }
 
-    public function Home()
+    public function Home() {}
+
+    public function deputados()
     {
-        DeputadosJob::dispatch();
+        $deputados = $this->deputados->pegarDeputados(["nome" => "e", "estado" => ""]);
+
+        return response()->json(["deputados" => $deputados]);
     }
 }

@@ -11,15 +11,12 @@ use Illuminate\Support\Facades\Http;
 class DeputadosJob implements ShouldQueue
 {
     use Queueable;
-    /**
-     * Create a new job instance.
-     */
+
+    public $timeout = 300;
+
     public function __construct() {}
 
-    /**
-     * Execute the job.
-     */
-    public function handle(): void
+    public function handle()
     {
         $deputadosModel = new Deputados();
 
@@ -28,29 +25,26 @@ class DeputadosJob implements ShouldQueue
 
         foreach ($valores["dados"] as $valor) {
             if ($deputadosModel->existeDeputado($valor["email"])) {
-                print_r(json_encode(["erro" => TRUE, "msg" => "Esse email já existe!"]));
+                return ["erro" => TRUE, "msg" => "Esse email já existe!"];
+                // continue;
             }
 
             $cadastrarDeputado = $deputadosModel->cadastrarDeputado($valor);
 
             if ($cadastrarDeputado->erro) {
-                print_r(json_encode(["erro" => true, "msg" => $cadastrarDeputado->msg]));
+                return print_r(json_encode(["erro" => TRUE, "msg" => $cadastrarDeputado->msg]));
             }
 
             $despesas = Http::get("https://dadosabertos.camara.leg.br/api/v2/deputados/{$valor['id']}/despesas");
 
             foreach ($despesas["dados"] as $despesa) {
-                if ($deputadosModel->existeDespesa($despesa["codDocumento"])) {
-                    print_r(json_encode(["erro" => TRUE, "msg" => "Código de documento já existe"]));
-                }
-
                 $cadastrarDespesa = $deputadosModel->cadastrarDespesa($despesa, $cadastrarDeputado->id);
                 if ($cadastrarDespesa->erro) {
-                    print_r(json_encode(["erro" => true, "msg" => $cadastrarDespesa->msg]));
+                    return print_r(json_encode(["erro" => TRUE, "msg" => $cadastrarDespesa->msg]));
                 }
             }
         }
 
-        print_r(json_encode(["erro" => FALSE, "msg" => "tudo certo"]));
+        return print_r(json_encode(["erro" => FALSE, "msg" => "tudo certo ok mestre"]));
     }
 }
