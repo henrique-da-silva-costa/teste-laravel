@@ -5,6 +5,7 @@ import { Button, Container, Table } from 'reactstrap';
 import Carregando from './componentes/Carregando';
 import Filtros from './componentes/Filtros';
 import { useNavigate } from 'react-router-dom';
+import { GrUpdate } from 'react-icons/gr';
 
 const Home = () => {
     const [dados, setDados] = useState([]);
@@ -13,14 +14,19 @@ const Home = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [botaoDesabilitado, setBotaoDesabilitado] = useState(false);
     const [removerLoading, setRemoverLoading] = useState(false);
+    const [mensagemJob, setMensagemJob] = useState("");
     const navegacao = useNavigate();
 
     const pegarDados = (page, filtros) => {
+        axios.get("http://127.0.0.1:80/jobmensagem").then((res) => {
+            setMensagemJob(res.data.mensagem)
+        }).catch((err) => {
+            console.log(err)
+        })
+
         setBotaoDesabilitado(true)
         axios.get("http://127.0.0.1:80/deputados", { params: { filtros, page } })
             .then((res) => {
-                console.log(res.data.data)
-
                 setDados(!res.data.data ? [] : res.data.data);
                 setPaginaAtual(res.data.current_page);
                 setTotalPages(res.data.last_page);
@@ -119,8 +125,12 @@ const Home = () => {
     return (
         <>
             <Container>
-                <Filtros paginaAtual={paginaAtual} pegarDados={pegarDados} />
-                <h1>Deputados</h1>
+                <div className="d-flex gap-2 mt-3">
+                    <h1>Deputados</h1>
+                    <Filtros paginaAtual={paginaAtual} pegarDados={pegarDados} />
+                    <span>{mensagemJob}</span>
+                    <Button color="transparent" alt="atualizar registros" onClick={() => pegarDados(paginaAtual)}><GrUpdate size={30} color="blue" /></Button>
+                </div>
                 {dados.length > 0 ?
                     <Table responsive striped size="sm">
                         <thead>
@@ -129,7 +139,7 @@ const Home = () => {
                                 <th>Nome</th>
                                 <th>Partido</th>
                                 <th>Estado</th>
-                                <th>Despesas</th>
+                                <th className='text-end'>Despesas</th>
                             </tr>
                         </thead>
                         <tbody>

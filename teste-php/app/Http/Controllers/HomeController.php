@@ -17,42 +17,7 @@ class HomeController extends Controller
 
     public function Home()
     {
-
-
-        $response = Http::get('https://dadosabertos.camara.leg.br/api/v2/deputados');
-        $valores = $response->json();
-
-        foreach ($valores["dados"] as $valor) {
-
-            // $respostaD = Http::get($valor["uri"]);
-            // $deputado = $respostaD->json();
-
-
-            // var_dump($deputado["dados"]["nomeCivil"])  nome completo;
-            // var_dump($deputado["dados"]["dataNascimento"]);
-            // var_dump($deputado["dados"]["ufNascimento"]);
-            // var_dump($deputado["dados"]["municipioNascimento"]);
-            // var_dump($deputado["dados"]["escolaridade"]);
-            // var_dump($deputado["dados"]);
-
-            // foreach ($deputado["ultimoStatus"] as $status) {
-            //     var_dump($dado);
-            // }
-
-
-            // if ($cadastrarDeputado->erro) {
-            //     return print_r(json_encode(["erro" => TRUE, "msg" => $cadastrarDeputado->msg]));
-            // }
-
-            // $despesas = Http::get("https://dadosabertos.camara.leg.br/api/v2/deputados/{$valor['id']}/despesas");
-
-            // foreach ($despesas["dados"] as $despesa) {
-            //     $cadastrarDespesa = $this->deputados->cadastrarDespesa($despesa, $cadastrarDeputado->id);
-            //     if ($cadastrarDespesa->erro) {
-            //         return print_r(json_encode(["erro" => TRUE, "msg" => $cadastrarDespesa->msg]));
-            //     }
-            // }
-        }
+        return response()->json(["home"]);
     }
 
     public function deputados(Request $request)

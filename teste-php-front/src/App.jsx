@@ -9,9 +9,11 @@ function App() {
 
   useEffect(() => {
     axios.get("http://localhost:80/sincronizar").then((res) => {
-      if (!res.data.erro) {
-        console.log(res.data.msg)
-      }
+      console.log(res);
+
+      // if (!res.data.erro) {
+      //   console.log(res.data.msg)
+      // }
     }).catch((err) => {
       console.log(err);
     })

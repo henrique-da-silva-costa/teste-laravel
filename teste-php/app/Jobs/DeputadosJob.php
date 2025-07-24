@@ -3,8 +3,11 @@
 namespace App\Jobs;
 
 use App\Models\Deputados;
+use App\Models\Job;
+use Illuminate\Console\Scheduling\Event;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
@@ -18,6 +21,7 @@ class DeputadosJob implements ShouldQueue
 
     public function handle()
     {
+        Job::mensagem("Carregando...");
         $deputadosModel = new Deputados();
 
         $response = Http::get('https://dadosabertos.camara.leg.br/api/v2/deputados');
@@ -25,14 +29,14 @@ class DeputadosJob implements ShouldQueue
 
         foreach ($valores["dados"] as $valor) {
             if ($deputadosModel->existeDeputado($valor["email"])) {
-                return ["erro" => TRUE, "msg" => "Esse email já existe!"];
-                // continue;
+                continue;
             }
 
             $cadastrarDeputado = $deputadosModel->cadastrarDeputado($valor);
 
             if ($cadastrarDeputado->erro) {
-                return print_r(json_encode(["erro" => TRUE, "msg" => $cadastrarDeputado->msg]));
+                Job::mensagem($cadastrarDeputado->msg);
+                return;
             }
 
             $despesas = Http::get("https://dadosabertos.camara.leg.br/api/v2/deputados/{$valor['id']}/despesas");
@@ -40,11 +44,13 @@ class DeputadosJob implements ShouldQueue
             foreach ($despesas["dados"] as $despesa) {
                 $cadastrarDespesa = $deputadosModel->cadastrarDespesa($despesa, $cadastrarDeputado->id);
                 if ($cadastrarDespesa->erro) {
-                    return print_r(json_encode(["erro" => TRUE, "msg" => $cadastrarDespesa->msg]));
+                    Job::mensagem($cadastrarDespesa->msg);
+                    return;
                 }
             }
         }
 
-        return print_r(json_encode(["erro" => FALSE, "msg" => "tudo certo ok mestre"]));
+        Job::mensagem("Concluido com sucesso!");
+        return;
     }
 }

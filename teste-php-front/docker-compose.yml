@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: .
+    ports:
+      - "5176:5176"
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    environment:
+      - PORT=5176
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "85:85"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - frontend
+    restart: unless-stopped
