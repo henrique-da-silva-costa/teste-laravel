@@ -26,6 +26,12 @@ php artisan migrate
 
 ## configurações do banco
 
+## Na pasta do projeto vai estar o banco para usar
+
+### Arquivo teste_php.sql
+
+## Nos arquivos .env colocar as configurações como esta abaixo
+
 ### arquivo .env normal
 <img width="187" height="109" alt="image" src="https://github.com/user-attachments/assets/5575dc9d-ef1c-446e-b63c-c9780a9f08d3" />
 
