@@ -1,5 +1,7 @@
 # Para rodar o projeto
 
+## Tenha o (composer) e o (NODE JS) instalado na sua maquina.
+
 # Back-end
 
 ## Abra o projeto na pasta teste-php no terminal e rode o comando (composer install) ou (composer update).
@@ -43,6 +45,10 @@ php artisan migrate
 # Front-end
 
 ## Abra o projeto na pasta teste-php no terminal.
+
+### Agora rode os seguintes comandos.
+
+npm install
 
 rode o comando docker-compose up -d --build
 
