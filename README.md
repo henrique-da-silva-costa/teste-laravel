@@ -4,7 +4,7 @@
 
 ## Abra o projeto na pasta teste-php no terminal e rode o comando (composer install) ou (composer update).
 
-## Renomeie o .env.example para .env.
+## Renomeie o .env.example para .env
 
 ## Rode esse comando no terminal.
 
@@ -28,7 +28,7 @@ php artisan migrate
 
 ## Na pasta do projeto vai estar o banco para usar.
 
-### Arquivo teste_php.sql.
+### Arquivo teste_php.sql
 
 ## Nos arquivos .env colocar as configurações como esta abaixo.
 
