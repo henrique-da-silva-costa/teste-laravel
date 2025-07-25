@@ -24,7 +24,15 @@ php artisan key:generate
 
 php artisan migrate
 
-## Por fim o projeto vai estar rodando em -> http://127.0.0.1:80 
+## configurações do banco
+
+### arquivo .env normal
+<img width="187" height="109" alt="image" src="https://github.com/user-attachments/assets/5575dc9d-ef1c-446e-b63c-c9780a9f08d3" />
+
+### arquivo .env da pasta laradock
+<img width="556" height="131" alt="image" src="https://github.com/user-attachments/assets/c201eb50-ad6e-4782-b73d-8975e3cc2d7f" />
+
+## Por fim o projeto vai estar rodando em -> http://127.0.0.1:80 e o Banco de dados -> http://127.0.0.1:8081
 
 # Front-end
 
