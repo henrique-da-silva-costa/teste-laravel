@@ -59,7 +59,7 @@ docker-compose up -d --build
 
 ## Back end
 
-## Abra a pasta teste-php pelo terminal
+## Abra a pasta teste-php pelo terminal, depois abra a pasta laradock pelo terminal
 
 ### Rode os comados.
 
