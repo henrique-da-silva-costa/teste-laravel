@@ -53,3 +53,18 @@ npm install
 docker-compose up -d --build
 
 ## Por fim o projeto vai estar rodando em -> http://127.0.0.1:5176
+
+
+# Para rodar os jobs do laravel.
+
+## Back end
+
+### Rode o comado.
+
+php artisan queue:work
+
+## Assim ele vai começar rodar os jobs
+
+## Front-end
+
+### recarregue a pagina pelo navegador, assim ele vai executar os jobs
