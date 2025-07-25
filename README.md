@@ -50,6 +50,6 @@ php artisan migrate
 
 npm install
 
-rode o comando docker-compose up -d --build
+docker-compose up -d --build
 
 ## Por fim o projeto vai estar rodando em -> http://127.0.0.1:5176
