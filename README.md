@@ -59,7 +59,11 @@ docker-compose up -d --build
 
 ## Back end
 
-### Rode o comado.
+## Abra a pasta teste-php pelo terminal
+
+### Rode os comados.
+
+docker-compose exec workspace bash
 
 php artisan queue:work
 
