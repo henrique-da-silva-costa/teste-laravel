@@ -1,31 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
 import Home from './Home'
-import axios from 'axios'
 import Despesas from './componentes/Despesas'
+import Orgaos from './componentes/Orgaos'
 
 function App() {
-
-  useEffect(() => {
-    axios.get("http://localhost:80/sincronizar").then((res) => {
-      console.log(res);
-
-      // if (!res.data.erro) {
-      //   console.log(res.data.msg)
-      // }
-    }).catch((err) => {
-      console.log(err);
-    })
-
-  }, []);
-
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route element={<Home />} path="/" />
-          <Route element={<Despesas />} path="/despesas/:id" />
+          <Route element={<Home />} path="/:pagina?" />
+          <Route element={<Despesas />} path="/despesas/:id/:nome/:pagina" />
+          <Route element={<Orgaos />} path="/orgaos/:id/:nome/:pagina" />
         </Routes>
       </BrowserRouter>
     </>

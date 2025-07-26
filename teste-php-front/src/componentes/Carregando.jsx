@@ -5,7 +5,7 @@ import styles from "../Loading.module.css";
 const Carregando = () => {
     return (
         <div className={styles.loading}>
-            <img src={img} height={100} alt="Carregando" />
+            <img src={img} height={70} alt="Carregando" />
         </div>
     )
 }

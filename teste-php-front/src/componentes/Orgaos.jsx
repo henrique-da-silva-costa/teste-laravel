@@ -1,90 +1,53 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react'
-import styles from "./stilos.module.css"
+import styles from "../stilos.module.css"
 import { Button, Container, Table } from 'reactstrap';
-import Carregando from './componentes/Carregando';
-import Filtros from './componentes/Filtros';
+import Carregando from './Carregando';
 import { useNavigate, useParams } from 'react-router-dom';
-import { GrUpdate } from 'react-icons/gr';
+import moment from 'moment';
+import { FaArrowLeft } from 'react-icons/fa';
 
-const Home = () => {
+const Orgaos = () => {
     const [dados, setDados] = useState([]);
     const [msg, setMsg] = useState("");
     const [paginaAtual, setPaginaAtual] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [botaoDesabilitado, setBotaoDesabilitado] = useState(false);
     const [removerLoading, setRemoverLoading] = useState(false);
-    const [mensagemJob, setMensagemJob] = useState("");
-    const [textoBotaoLimpar, setTextoBotaoLimpar] = useState("LIMPAR");
+    const { id, nome, pagina } = useParams();
     const navegacao = useNavigate();
-    const { pagina } = useParams();
 
-    const limparDados = () => {
-        setTextoBotaoLimpar("CARREGANDO...");
-        setBotaoDesabilitado(true);
-        axios.delete("http://127.0.0.1:80/limpar").then((res) => {
-            if (res.data.erro) {
-                setTextoBotaoLimpar("LIMPAR");
-                setBotaoDesabilitado(false);
-            }
-            setBotaoDesabilitado(false);
-            setTextoBotaoLimpar("LIMPAR");
-        }).catch(() => {
-            setTextoBotaoLimpar("LIMPAR");
-            setBotaoDesabilitado(false);
-        })
-    }
-
-    const pegarDados = (page, filtros) => {
-        axios.get("http://127.0.0.1:80/jobmensagem").then((res) => {
-            setMensagemJob(res.data.mensagem)
-        })
-
+    const pegarDados = (page) => {
         setBotaoDesabilitado(true)
-        axios.get("http://127.0.0.1:80/deputados", { params: { filtros, page } })
+        axios.get("http://127.0.0.1:80/orgaos", { params: { id, page } })
             .then((res) => {
+                setBotaoDesabilitado(true)
                 setDados(!res.data.data ? [] : res.data.data);
                 setPaginaAtual(res.data.current_page);
                 setTotalPages(res.data.last_page);
                 setBotaoDesabilitado(false); ''
                 setRemoverLoading(true);
-                setMsg("");
-            }).catch((err) => {
+            }).catch(() => {
                 setMsg("erro interno servidor, entre em  contato com o suporte");
                 setBotaoDesabilitado(false);
             });
     }
 
     useEffect(() => {
-        axios.get("http://localhost:80/sincronizar").then((res) => {
-            const timer = setTimeout(() => {
-                pagina ? pegarDados(Number(pagina), JSON.parse(localStorage.getItem("filtros"))) : pegarDados(paginaAtual, JSON.parse(localStorage.getItem("filtros")));
-            }, 1000);
-            return () => clearTimeout(timer);
-        }).catch((err) => {
-            console.log(err);
-        })
+        const timer = setTimeout(() => {
+            pegarDados(paginaAtual);
+        }, 1000);
+
+        return () => clearTimeout(timer);
     }, []);
 
     const paginar = (page) => {
         setBotaoDesabilitado(true);
         if (page >= 1 && page <= totalPages) {
             setPaginaAtual(page);
-            pegarDados(page, JSON.parse(localStorage.getItem("filtros")));
+            pegarDados(page);
         }
     };
-
-    const retornaMensagemJob = (msg) => {
-
-        if (msg == "Carregando...") {
-            return "text-warning";
-        }
-        if (msg == "Concluido com sucesso!") {
-            return "text-success";
-        }
-
-        return "";
-    }
 
     const renderizarBotoesPagina = () => {
         const grupoAtual = Math.ceil(paginaAtual / 5);
@@ -154,27 +117,21 @@ const Home = () => {
 
     return (
         <>
-            <Container>
+            <Container className='mt-2'>
+                <Button color='transparent' onClick={() => navegacao(`/${Number(pagina)}`)}><FaArrowLeft size={40} color='black' /></Button>
                 <div className="d-flex gap-1">
-                    <h1 className="mt-3">Deputados</h1>
+                    <h1>Orgão de {nome}</h1>
                     {botaoDesabilitado && removerLoading ? <Carregando /> : ""}
-                </div>
-                <div className={`d-flex gap-2 mt-3 mb-3 ${styles.menuPaginaPrincipal}`}>
-                    <Button size="sm" color='danger' disabled={botaoDesabilitado} onClick={() => limparDados()}>{textoBotaoLimpar}</Button>
-                    <Filtros paginaAtual={paginaAtual} pegarDados={pegarDados} />
-                    <span className={retornaMensagemJob(mensagemJob)}>{!mensagemJob ? "Sem dados" : mensagemJob}</span>
-                    <Button size="sm" color="transparent" alt="atualizar registros" onClick={() => pegarDados(paginaAtual, JSON.parse(localStorage.getItem("filtros")))}><GrUpdate size={30} color="blue" /></Button>
                 </div>
                 {dados.length > 0 ?
                     <Table responsive striped size="sm">
                         <thead>
                             <tr>
-                                <th></th>
                                 <th>Nome</th>
-                                <th>Partido</th>
-                                <th>Estado</th>
-                                <th className='text-end'>Despesas</th>
-                                <th className='text-end'>Orgãos</th>
+                                <th>Sigla</th>
+                                <th>Titulo</th>
+                                <th>Data de incio</th>
+                                <th>Data final</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -182,18 +139,11 @@ const Home = () => {
                                 {dados.length > 0 ? dados.map((dado, index) => {
                                     return (
                                         <tr key={index}>
-                                            <td>
-                                                <img src={dado.foto} height={70} alt="foto do deputado" />
-                                            </td>
-                                            <td>{dado.nome ? dado.nome.slice(0, 30) + `${dado.nome.length >= 30 ? "..." : ""}` : "não informado"}</td>
-                                            <td><strong>{dado.partido}</strong></td>
-                                            <td><strong>{dado.estado}</strong></td>
-                                            <td className="text-end">
-                                                {<Button size="sm" color="success" onClick={() => navegacao(`/despesas/${dado.id}/${dado.nome}/${paginaAtual}`)}>Despesas</Button>}
-                                            </td>
-                                            <td className="text-end">
-                                                {<Button size="sm" color="primary" onClick={() => navegacao(`/orgaos/${dado.id}/${dado.nome}/${paginaAtual}`)}>Orgãos</Button>}
-                                            </td>
+                                            <td>{!dado.nomePublicacao ? "Não informado" : dado.nomePublicacao}</td>
+                                            <td>{!dado.siglaOrgao ? "Não informado" : dado.siglaOrgao}</td>
+                                            <td>{!dado.titulo ? "Não informado" : dado.titulo}</td>
+                                            <td>{!dado.dataInicio ? "Não informado" : moment(dado.dataInicio).format("DD/MM/YYYY")}</td>
+                                            <td>{!dado.dataFim ? "Não informado" : moment(dado.dataFim).format("DD/MM/YYYY")}</td>
                                         </tr>
                                     )
                                 }) : ""}
@@ -227,9 +177,9 @@ const Home = () => {
                         </div>
                     </>
                     : ""}
-            </Container >
+            </Container>
         </>
     )
 }
 
-export default Home
+export default Orgaos

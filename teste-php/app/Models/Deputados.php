@@ -9,34 +9,45 @@ use stdClass;
 
 class Deputados extends Model
 {
-
     private $tabelaDeputados;
     private $tabelaDespesas;
+    private $tabelaOrgaos;
 
     public function __construct()
     {
         $this->tabelaDeputados = Tabelas::DEPUTADOS;
         $this->tabelaDespesas = Tabelas::DESPESAS;
+        $this->tabelaOrgaos = Tabelas::ORGAOS;
     }
 
     public function pegarDeputados($filtros)
     {
         try {
-            $nome = isset($filtros["nome"]) ? $filtros["nome"] : NULL;
-            $estado = isset($filtros["estado"]) ? $filtros["estado"] : NULL;
+            $filtroNome = isset($filtros["nome"]) ? $filtros["nome"] : NULL;
+            $filtroEstado = isset($filtros["estado"]) ? $filtros["estado"] : NULL;
+            $filtroPartido = isset($filtros["partido"]) ? $filtros["partido"] : NULL;
 
-            $dados = DB::table($this->tabelaDeputados)
-                ->where("{$this->tabelaDeputados}.nome", "like", "{$nome}%")
-                ->where("{$this->tabelaDeputados}.siglaUf", "like", "{$estado}%")
-                ->select([
-                    "{$this->tabelaDeputados}.id",
-                    "{$this->tabelaDeputados}.nome",
-                    "{$this->tabelaDeputados}.urlFoto AS foto",
-                    "{$this->tabelaDeputados}.siglaUf AS estado",
-                    "{$this->tabelaDeputados}.siglaPartido AS partido"
-                ])
-                ->limit(100)
-                ->paginate(5);
+            $sql = DB::table($this->tabelaDeputados);
+            if ($filtroNome) {
+                $sql->where("{$this->tabelaDeputados}.nome", "like", "{$filtroNome}%");
+            }
+            if ($filtroPartido) {
+                $sql->where("{$this->tabelaDeputados}.siglaPartido", "like", "{$filtroPartido}%");
+            }
+            if ($filtroEstado) {
+                $sql->where("{$this->tabelaDeputados}.siglaUf", "like", "{$filtroEstado}%");
+            }
+            $sql->select([
+                "{$this->tabelaDeputados}.id",
+                "{$this->tabelaDeputados}.nome",
+                "{$this->tabelaDeputados}.urlFoto AS foto",
+                "{$this->tabelaDeputados}.siglaUf AS estado",
+                "{$this->tabelaDeputados}.siglaPartido AS partido"
+            ]);
+
+            $sql->limit(100);
+
+            $dados = $sql->paginate(4);
 
             return $dados;
         } catch (\Throwable $th) {
@@ -54,6 +65,27 @@ class Deputados extends Model
                     "{$this->tabelaDespesas}.nomeFornecedor as fornecedor",
                     "{$this->tabelaDespesas}.dataDocumento as data",
                     "{$this->tabelaDespesas}.valorDocumento AS valor",
+                ])
+                ->limit(100)
+                ->paginate(7);
+
+            return $dados;
+        } catch (\Throwable $th) {
+            return [];
+        }
+    }
+
+    public function pegarOrgaos($id)
+    {
+        try {
+            $dados = DB::table($this->tabelaOrgaos)
+                ->where("deputados_id", "=", $id)
+                ->select([
+                    "{$this->tabelaOrgaos}.siglaOrgao as sigla",
+                    "{$this->tabelaOrgaos}.nomePublicacao as nome",
+                    "{$this->tabelaOrgaos}.titulo",
+                    "{$this->tabelaOrgaos}.dataInicio",
+                    "{$this->tabelaOrgaos}.dataFim",
                 ])
                 ->limit(100)
                 ->paginate(7);
@@ -142,7 +174,7 @@ class Deputados extends Model
             $codLote = isset($dados["codLote"]) ? $dados["codLote"] : NULL;
             $parcela = isset($dados["parcela"]) ? $dados["parcela"] : NULL;
 
-            DB::table($this->tabelaDespesas)->insertGetId([
+            DB::table($this->tabelaDespesas)->insert([
                 "deputados_id" => $deputado_id,
                 "ano" => $ano,
                 "mes" => $mes,
@@ -161,6 +193,42 @@ class Deputados extends Model
                 "numRessarcimento" => $numRessarcimento,
                 "codLote" => $codLote,
                 "parcela" => $parcela
+            ]);
+
+            return $retorno;
+        } catch (\Throwable $th) {
+            $retorno = new stdClass;
+            $retorno->erro = TRUE;
+            $retorno->msg = $th->getMessage();
+
+            return $retorno;
+        }
+    }
+
+    public function cadastrarOrgaos($dados, $deputado_id)
+    {
+        try {
+            $retorno = new stdClass;
+            $retorno->erro = FALSE;
+            $retorno->msg = NULL;
+
+            $siglaOrgao = isset($dados["siglaOrgao"]) ? $dados["siglaOrgao"] : NULL;
+            $nomeOrgao = isset($dados["nomeOrgao"]) ? $dados["nomeOrgao"] : NULL;
+            $nomePublicacao = isset($dados["nomePublicacao"]) ? $dados["nomePublicacao"] : NULL;
+            $titulo = isset($dados["titulo"]) ? $dados["titulo"] : NULL;
+            $codTitulo = isset($dados["codTitulo"]) ? $dados["codTitulo"] : NULL;
+            $dataInicio = isset($dados["dataInicio"]) ? $dados["dataInicio"] : NULL;
+            $dataFim = isset($dados["dataFim"]) ? $dados["dataFim"] : NULL;
+
+            DB::table($this->tabelaOrgaos)->insert([
+                "deputados_id" => $deputado_id,
+                "siglaOrgao" => $siglaOrgao,
+                "nomeOrgao" => $nomeOrgao,
+                "nomePublicacao" => $nomePublicacao,
+                "titulo" => $titulo,
+                "codTitulo" => $codTitulo,
+                "dataInicio" => $dataInicio,
+                "dataFim" => $dataFim,
             ]);
 
             return $retorno;

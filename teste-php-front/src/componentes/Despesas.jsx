@@ -14,35 +14,38 @@ const Despesas = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [botaoDesabilitado, setBotaoDesabilitado] = useState(false);
     const [removerLoading, setRemoverLoading] = useState(false);
-    const { id } = useParams();
+    const { id, nome, pagina } = useParams();
     const navegacao = useNavigate();
 
-    const pegarDados = (page, filtros) => {
+    const pegarDados = (page) => {
         setBotaoDesabilitado(true)
         axios.get("http://127.0.0.1:80/despesas", { params: { id, page } })
             .then((res) => {
-                console.log(res.data);
+                setBotaoDesabilitado(true)
                 setDados(!res.data.data ? [] : res.data.data);
                 setPaginaAtual(res.data.current_page);
                 setTotalPages(res.data.last_page);
                 setBotaoDesabilitado(false); ''
                 setRemoverLoading(true);
-            }).catch((err) => {
+            }).catch(() => {
                 setMsg("erro interno servidor, entre em  contato com o suporte");
                 setBotaoDesabilitado(false);
             });
     }
 
     useEffect(() => {
-        setTimeout(() => {
+        const timer = setTimeout(() => {
             pegarDados(paginaAtual);
         }, 1000);
-    }, [paginaAtual]);
+
+        return () => clearTimeout(timer);
+    }, []);
 
     const paginar = (page) => {
         setBotaoDesabilitado(true);
         if (page >= 1 && page <= totalPages) {
             setPaginaAtual(page);
+            pegarDados(page);
         }
     };
 
@@ -53,7 +56,6 @@ const Despesas = () => {
 
         return (
             <>
-                {/* Botão para primeira página */}
                 {paginaAtual > 1 && (
                     <Button
                         color="primary"
@@ -65,7 +67,6 @@ const Despesas = () => {
                     </Button>
                 )}
 
-                {/* Botão para voltar ao grupo anterior */}
                 {grupoAtual > 1 && (
                     <Button
                         color="primary"
@@ -77,7 +78,6 @@ const Despesas = () => {
                     </Button>
                 )}
 
-                {/* Renderizar páginas do grupo atual */}
                 {Array.from({ length: fim - inicio + 1 }, (_, i) => inicio + i).map((pagina) => (
                     <Button
                         color="primary"
@@ -90,7 +90,6 @@ const Despesas = () => {
                     </Button>
                 ))}
 
-                {/* Botão para avançar ao próximo grupo */}
                 {grupoAtual < Math.ceil(totalPages / 5) && (
                     <Button
                         color="primary"
@@ -102,7 +101,6 @@ const Despesas = () => {
                     </Button>
                 )}
 
-                {/* Botão para última página */}
                 {paginaAtual < totalPages && (
                     <Button
                         color="primary"
@@ -120,8 +118,11 @@ const Despesas = () => {
     return (
         <>
             <Container className='mt-2'>
-                <Button color='transparent' onClick={() => navegacao("/")}><FaArrowLeft size={40} color='black' /></Button>
-                <h1>Despesas</h1>
+                <Button color='transparent' onClick={() => navegacao(`/${pagina}`)}><FaArrowLeft size={40} color='black' /></Button>
+                <div className="d-flex gap-1">
+                    <h1>Despesas de {nome}</h1>
+                    {botaoDesabilitado && removerLoading ? <Carregando /> : ""}
+                </div>
                 {dados.length > 0 ?
                     <Table responsive striped size="sm">
                         <thead>
@@ -130,8 +131,6 @@ const Despesas = () => {
                                 <th>Valor</th>
                                 <th>Data</th>
                                 <th>Fornecedor</th>
-                                {/* <th>Partido</th>
-                                <th>Estado</th> */}
                             </tr>
                         </thead>
                         <tbody>
@@ -139,8 +138,8 @@ const Despesas = () => {
                                 {dados.length > 0 ? dados.map((dado, index) => {
                                     return (
                                         <tr key={index}>
-                                            <td>{dado.tipo}</td>
-                                            <td><strong>R$ {dado.valor}</strong></td>
+                                            <td>{!dado.tipo ? "Não informado" : dado.tipo}</td>
+                                            <td><strong>{!dado.valor ? "Não informado" : `R$ ${dado.valor}`}`</strong></td>
                                             <td>{moment(dado.data).format("DD/MM/YYYY")}</td>
                                             <td>{dado.fornecedor}</td>
                                         </tr>
@@ -149,6 +148,8 @@ const Despesas = () => {
                             </>
                         </tbody>
                     </Table>
+
+
                     : !removerLoading ? <Carregando /> : dados.length > 0 ? "" : <h2 className="text-center">SEM INFORMAÇÕES</h2>}
 
                 {msg ? <p className={styles.erro}>{msg}</p> : ""}
@@ -174,7 +175,6 @@ const Despesas = () => {
                                 Próximo
                             </Button>
                         </div>
-                        {botaoDesabilitado ? <Carregando /> : ""}
                     </>
                     : ""}
             </Container>

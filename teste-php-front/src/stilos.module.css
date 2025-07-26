@@ -2,6 +2,58 @@
   text-transform: capitalize;
 }
 
+/* Estilo para o select básico */
+
+/* Estilo para o select com busca */
+/* .selectComBusca {
+  position: relative;
+  width: 300px;
+} */
+
+.listaOpcoes {
+  position: absolute;
+  width: 25%;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 5px;
+  padding: 0;
+  list-style: none;
+  background: white;
+  z-index: 10;
+}
+
+.listaOpcoes li {
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.listaOpcoes li:hover {
+  background-color: #f0f0f0;
+}
+
+.selecionado {
+  background-color: #e0e0e0;
+}
+
+.nenhumaOpcao {
+  color: #666;
+  font-style: italic;
+}
+
+.resultado {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+}
+
+.botaoLimpar {
+  position: absolute;
+  left: 5px;
+}
+
 .botaoPaginas {
   display: flex;
   gap: 5px;
@@ -51,6 +103,10 @@
     font-size: 12px;
   }
 
+  .menuPaginaPrincipal {
+    flex-direction: column;
+  }
+
   .fonteUsuarioNome {
     font-size: 12px;
   }
@@ -65,5 +121,9 @@
 
   .divFilhaFiltro {
     width: 100%;
+  }
+
+  .listaOpcoes {
+    width: 45%;
   }
 }

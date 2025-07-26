@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Deputados;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
-class HomeController extends Controller
+class DeputadosController extends Controller
 {
     private $deputados;
 
@@ -17,7 +16,7 @@ class HomeController extends Controller
 
     public function Home()
     {
-        return response()->json(["home"]);
+        return response()->json(["Home"]);
     }
 
     public function deputados(Request $request)
@@ -35,8 +34,21 @@ class HomeController extends Controller
             return response()->json([]);
         }
 
-        $deputados = $this->deputados->pegarDespesas($id);
+        $despesas = $this->deputados->pegarDespesas($id);
 
-        return response()->json($deputados);
+        return response()->json($despesas);
+    }
+
+    public function orgaos(Request $request)
+    {
+        $id = isset($request["id"]) ? $request["id"] : 0;
+
+        if (!is_numeric($id)) {
+            return response()->json([]);
+        }
+
+        $orgaos = $this->deputados->pegarOrgaos($id);
+
+        return response()->json($orgaos);
     }
 }

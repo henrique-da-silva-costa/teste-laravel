@@ -6,4 +6,5 @@ class Tabelas
 {
     const DEPUTADOS = "deputados";
     const DESPESAS = "despesas";
+    const ORGAOS = "orgaos";
 }
