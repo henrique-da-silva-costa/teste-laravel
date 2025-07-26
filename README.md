@@ -1,6 +1,6 @@
 # Para rodar o projeto
 
-## Tenha o **DOCKER** / **COMPOSER** / **NODE JS** instalado na sua maquina.
+## Tenha as seguintes feramentas instaladas **DOCKER**, **COMPOSER** e **NODE JS**.
 
 # Back-end
 
