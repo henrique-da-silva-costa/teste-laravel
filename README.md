@@ -1,3 +1,8 @@
+# Tecnologias usadas
+## Docker
+## Back-end -> **PHP/Laravel/Mysql**
+## Front-end -> **React**
+
 # Para rodar o projeto
 
 ## Tenha as seguintes feramentas instaladas **DOCKER**, **COMPOSER** e **NODE JS**.
@@ -44,7 +49,7 @@ php artisan migrate
 
 # Front-end
 
-## Abra o projeto na pasta teste-php no terminal.
+## Abra o projeto na pasta teste-php-front no terminal.
 
 ### Agora rode os seguintes comandos.
 
