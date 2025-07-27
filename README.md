@@ -19,7 +19,7 @@ git clone https://github.com/laradock/laradock.git
 
 ## Entre na pasta laradock pelo terminal.
 
-## Renomeie o .env.example para .env dentro da pasta laradock (sao dois .env.example, uma na pasta laradock e o outro na pasta normal do projeto).
+## Renomeie o .env.example para .env dentro da pasta laradock (são dois .env.example, uma na pasta laradock e o outro na pasta normal do projeto).
 
 ## Dentro da pasta laradock rode no terminal os comandos abaixo.
 
