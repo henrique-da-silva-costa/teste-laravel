@@ -2,7 +2,7 @@
 
 # Tecnologias usadas
 
-## Back-end -> ** PHP/Laravel/Mysql ** Front-end -> ** React **
+## Back-end -> **PHP/Laravel/Mysql** Front-end -> **React**
 
 ## Tenha as seguintes feramentas instaladas **DOCKER**, **COMPOSER** e **NODE JS**.
 
