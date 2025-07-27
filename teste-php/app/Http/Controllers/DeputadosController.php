@@ -16,7 +16,7 @@ class DeputadosController extends Controller
 
     public function Home()
     {
-        return response()->json(["Home"]);
+        return response()->json(["Tudo funcionado"]);
     }
 
     public function deputados(Request $request)

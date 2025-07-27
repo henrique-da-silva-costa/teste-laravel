@@ -46,18 +46,21 @@ class Deputados extends Model
             ]);
 
             $sql->limit(100);
-
             $dados = $sql->paginate(4);
 
             return $dados;
         } catch (\Throwable $th) {
-            return [$th->getMessage()];
+            return [];
         }
     }
 
     public function pegarDespesas($id)
     {
         try {
+            if (!is_numeric($id)) {
+                return [];
+            }
+
             $dados = DB::table($this->tabelaDespesas)
                 ->where("deputados_id", "=", $id)
                 ->select([
@@ -67,7 +70,7 @@ class Deputados extends Model
                     "{$this->tabelaDespesas}.valorDocumento AS valor",
                 ])
                 ->limit(100)
-                ->paginate(7);
+                ->paginate(5);
 
             return $dados;
         } catch (\Throwable $th) {
@@ -78,6 +81,10 @@ class Deputados extends Model
     public function pegarOrgaos($id)
     {
         try {
+            if (!is_numeric($id)) {
+                return [];
+            }
+
             $dados = DB::table($this->tabelaOrgaos)
                 ->where("deputados_id", "=", $id)
                 ->select([

@@ -118,7 +118,7 @@ const Orgaos = () => {
     return (
         <>
             <Container className='mt-2'>
-                <Button color='transparent' onClick={() => navegacao(`/${Number(pagina)}`)}><FaArrowLeft size={40} color='black' /></Button>
+                <Button color='transparent' onClick={() => navegacao(`/${pagina}`)}><FaArrowLeft size={40} color='black' /></Button>
                 <div className="d-flex gap-1">
                     <h1>Orgão de {nome}</h1>
                     {botaoDesabilitado && removerLoading ? <Carregando /> : ""}
@@ -129,8 +129,8 @@ const Orgaos = () => {
                             <tr>
                                 <th>Nome</th>
                                 <th>Sigla</th>
-                                <th>Titulo</th>
-                                <th>Data de incio</th>
+                                <th>Título</th>
+                                <th>Data de início</th>
                                 <th>Data final</th>
                             </tr>
                         </thead>

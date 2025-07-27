@@ -45,7 +45,6 @@ class DeputadosJob implements ShouldQueue
         Job::mensagem("Carregando...");
 
         $deputadosModel = new Deputados();
-
         $response = Http::get('https://dadosabertos.camara.leg.br/api/v2/deputados');
         $valores = $response->json();
 

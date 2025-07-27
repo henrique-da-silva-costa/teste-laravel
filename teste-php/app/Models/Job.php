@@ -10,7 +10,6 @@ class Job extends Model
 {
     public static function mensagem($mensagem)
     {
-
         try {
             $retorno = new stdClass;
             $retorno->erro = FALSE;

@@ -10,7 +10,6 @@ const Filtros = ({ paginaAtual, pegarDados = () => { } }) => {
     const [formulario, setFormulario] = useState({});
     const formRef = useRef();
     const navegacao = useNavigate();
-
     const [busca, setBusca] = useState('');
     const [estadoSelecionado, setEstadoSelecionado] = useState('');
     const [mostrarOpcoes, setMostrarOpcoes] = useState(false);
@@ -20,7 +19,7 @@ const Filtros = ({ paginaAtual, pegarDados = () => { } }) => {
         return nome.toLowerCase().includes(busca.toLowerCase());
     });
 
-    const selecionarEstado = (sigla, nome) => {
+    const selecionarEstado = (sigla) => {
         setEstadoSelecionado(sigla);
         setBusca(sigla);
         setMostrarOpcoes(false);
@@ -65,7 +64,7 @@ const Filtros = ({ paginaAtual, pegarDados = () => { } }) => {
     return (
         <Container>
             <form ref={formRef} onSubmit={filtrar}>
-                <div className={`d-flex align-items-center gap-1 justify-content-center ${styles.divPaiFiltro}`}>
+                <div className={`d-flex align-items-center gap-1 justify-content-start ${styles.divPaiFiltro}`}>
                     <div className={styles.divFilhaFiltro}>
                         <label><strong>Nome</strong></label>
                         <Input name="nome" placeholder="Nome do deputado" defaultValue={JSON.parse(localStorage.getItem("filtros")).nome} onChange={changeformulario} />
@@ -75,14 +74,13 @@ const Filtros = ({ paginaAtual, pegarDados = () => { } }) => {
                         <Input name="partido" placeholder="Nome do partido" defaultValue={JSON.parse(localStorage.getItem("filtros")).partido} onChange={changeformulario} />
                     </div>
                     <div className={styles.divFilhaFiltro}>
-                        <label><strong>Sigla do Estado</strong></label>
+                        <label><strong>Estado</strong></label>
                         <div className={styles.selectComBusca}>
                             <div className={styles.campoBusca}>
                                 <Input
                                     type="text"
                                     value={busca}
                                     name="estado"
-                                    // onChange={changeformulario}
                                     onChange={(e) => {
                                         setBusca(e.target.value);
                                         if (e.target.value.length > 0) {

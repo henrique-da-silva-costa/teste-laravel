@@ -139,7 +139,7 @@ const Despesas = () => {
                                     return (
                                         <tr key={index}>
                                             <td>{!dado.tipo ? "Não informado" : dado.tipo}</td>
-                                            <td><strong>{!dado.valor ? "Não informado" : `R$ ${dado.valor}`}`</strong></td>
+                                            <td><strong>{!dado.valor ? "Não informado" : `R$ ${dado.valor}`}</strong></td>
                                             <td>{moment(dado.data).format("DD/MM/YYYY")}</td>
                                             <td>{dado.fornecedor}</td>
                                         </tr>

@@ -32,6 +32,7 @@ const Home = () => {
         }).catch(() => {
             setTextoBotaoLimpar("LIMPAR");
             setBotaoDesabilitado(false);
+            setMsg("erro interno servidor, entre em  contato com o suporte");
         })
     }
 
@@ -49,20 +50,21 @@ const Home = () => {
                 setBotaoDesabilitado(false); ''
                 setRemoverLoading(true);
                 setMsg("");
-            }).catch((err) => {
+                console.log("ERR")
+            }).catch(() => {
                 setMsg("erro interno servidor, entre em  contato com o suporte");
                 setBotaoDesabilitado(false);
             });
     }
 
     useEffect(() => {
-        axios.get("http://localhost:80/sincronizar").then((res) => {
+        axios.get("http://localhost:80/sincronizar").then(() => {
             const timer = setTimeout(() => {
                 pagina ? pegarDados(Number(pagina), JSON.parse(localStorage.getItem("filtros"))) : pegarDados(paginaAtual, JSON.parse(localStorage.getItem("filtros")));
             }, 1000);
             return () => clearTimeout(timer);
-        }).catch((err) => {
-            console.log(err);
+        }).catch(() => {
+            setMsg("erro interno servidor, entre em  contato com o suporte");
         })
     }, []);
 
@@ -75,7 +77,6 @@ const Home = () => {
     };
 
     const retornaMensagemJob = (msg) => {
-
         if (msg == "Carregando...") {
             return "text-warning";
         }
@@ -83,7 +84,7 @@ const Home = () => {
             return "text-success";
         }
 
-        return "";
+        return "text-dark";
     }
 
     const renderizarBotoesPagina = () => {
@@ -155,16 +156,18 @@ const Home = () => {
     return (
         <>
             <Container>
-                <div className="d-flex gap-1">
-                    <h1 className="mt-3">Deputados</h1>
-                    {botaoDesabilitado && removerLoading ? <Carregando /> : ""}
+                <div className="d-flex gap-1 align-items-end justify-content-between mt-2 mb-3">
+                    <div className="d-flex gap-1 align-items-end">
+                        <h1 className="mt-3 m-0">Deputados</h1>
+                        {botaoDesabilitado && removerLoading ? <Carregando /> : ""}
+                        <Button size="sm" color='danger' disabled={botaoDesabilitado} onClick={() => limparDados()}>{textoBotaoLimpar}</Button>
+                    </div>
+                    <div className="d-flex flex-column">
+                        <Button size="sm" color="transparent" alt="atualizar registros" onClick={() => pegarDados(paginaAtual, JSON.parse(localStorage.getItem("filtros")))}><GrUpdate size={30} color="blue" /></Button>
+                        <span className={retornaMensagemJob(mensagemJob)}>{dados.length <= 0 ? "Sem dados" : mensagemJob}</span>
+                    </div>
                 </div>
-                <div className={`d-flex gap-2 mt-3 mb-3 ${styles.menuPaginaPrincipal}`}>
-                    <Button size="sm" color='danger' disabled={botaoDesabilitado} onClick={() => limparDados()}>{textoBotaoLimpar}</Button>
-                    <Filtros paginaAtual={paginaAtual} pegarDados={pegarDados} />
-                    <span className={retornaMensagemJob(mensagemJob)}>{!mensagemJob ? "Sem dados" : mensagemJob}</span>
-                    <Button size="sm" color="transparent" alt="atualizar registros" onClick={() => pegarDados(paginaAtual, JSON.parse(localStorage.getItem("filtros")))}><GrUpdate size={30} color="blue" /></Button>
-                </div>
+                <Filtros paginaAtual={paginaAtual} pegarDados={pegarDados} />
                 {dados.length > 0 ?
                     <Table responsive striped size="sm">
                         <thead>
