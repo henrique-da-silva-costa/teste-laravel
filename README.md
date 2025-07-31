@@ -1,3 +1,10 @@
+# Descrição
+
+## Esse projeto foi desenvolvido para um teste.
+### Nesse projeto, eu utilizei a API dos dados abertos, para pegar dados dos deputados e listar seus dados de forma dinâmica.
+### Nos dados, eu fiz uma sincronização com as despesas e os órgãos dos deputados.
+### Essa sincronização foi feita usando as, jobs do Laravel, um tipo de CRON, para que os dados carreguem e não interfira no funcionamento do sistema.
+
 # Tecnologias usadas
 ## Docker
 ## Back-end -> **PHP/Laravel/Mysql**
@@ -77,3 +84,6 @@ php artisan queue:work
 ## Front-end
 
 ### recarregue a pagina pelo navegador, assim ele vai executar os jobs
+
+<img width="1365" height="597" alt="image" src="https://github.com/user-attachments/assets/46bd92e6-34f6-4748-8cc5-7b16a0f96513" />
+
